@@ -1,0 +1,24 @@
+name: CodeChecker
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.8
+      - name: Install Dependencies
+        run: |
+          pip3 install --no-cache-dir --upgrade pip
+          pip3 install --no-cache-dir flake8
+          pip3 install --no-cache-dir mypy
+      - name: Run flake8
+        run: flake8 .
+#      - name: Run mypy
+#        run: mypy .
