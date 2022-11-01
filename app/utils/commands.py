@@ -7,6 +7,11 @@ from aiogram.types import BotCommand, BotCommandScopeDefault
 
 
 async def set_commands(bot: Bot) -> None:
+    """
+    Create menu commands
+    :param bot:
+    :return:
+    """
     commands = [
         BotCommand(
             command="start",
