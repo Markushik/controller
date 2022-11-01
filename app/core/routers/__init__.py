@@ -8,6 +8,10 @@ from . import client
 
 
 def setup_routers() -> Router:
+    """
+    Setup routers
+    :return:
+    """
     router = Router()
     router.include_router(client.router)
 

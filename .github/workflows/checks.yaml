@@ -20,5 +20,3 @@ jobs:
           pip3 install --no-cache-dir mypy
       - name: Run flake8
         run: flake8 .
-      - name: Run mypy
-        run: mypy .

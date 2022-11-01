@@ -1,3 +1,7 @@
+"""
+This file is responsible for configuring dynaconf
+"""
+
 from dynaconf import Dynaconf
 
 settings = Dynaconf(

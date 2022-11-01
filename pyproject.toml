@@ -14,6 +14,7 @@ flake8 = "^5.0.4"
 asyncpg = "^0.27.0"
 mypy = "^0.982"
 sqlalchemy = "^1.4.42"
+pylint = "^2.15.5"
 
 [[tool.mypy.overrides]]
 module = "sqlalchemy.*"
