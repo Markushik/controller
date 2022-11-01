@@ -10,9 +10,14 @@ python = "^3.10"
 dynaconf = "^3.1.11"
 loguru = "^0.6.0"
 aiogram = "^3.0.0b5"
-sqlalchemy = "^1.4.42"
 flake8 = "^5.0.4"
+asyncpg = "^0.27.0"
+mypy = "^0.982"
+sqlalchemy = "^1.4.42"
 
+[[tool.mypy.overrides]]
+module = "sqlalchemy.*"
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core"]
