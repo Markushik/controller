@@ -6,6 +6,7 @@ import asyncio
 
 from aiogram import Bot, Dispatcher
 # from aiogram.fsm.storage.redis import RedisStorage
+# test
 from aiogram.fsm.storage.memory import MemoryStorage
 from loguru import logger
 # from sqlalchemy.ext.asyncio import create_async_engine
