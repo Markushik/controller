@@ -12,4 +12,4 @@ router.message.filter(Command(commands=["settings"]))
 
 @router.message(Command(commands="settings"))
 async def cmd_settings(message: Message) -> None:
-    await message.answer(f"#TODO")
+    await message.answer("#TODO")

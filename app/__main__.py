@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher
 # from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.fsm.storage.memory import MemoryStorage
 from loguru import logger
-from sqlalchemy.ext.asyncio import create_async_engine
+# from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.config import settings
 from app.core.routers import setup_routers
@@ -22,12 +22,12 @@ async def _main() -> None:
     """
     logger.info("START BOT")
 
-    engine = create_async_engine(
-        f"postgresql+asyncpg://postgres:postgres@localhost/",
-        future=True,
-        echo=True,
-
-    )
+    # engine = create_async_engine(
+    #     f"postgresql+asyncpg://postgres:postgres@localhost/",
+    #     future=True,
+    #     echo=True,
+    #
+    # )
 
     storage = MemoryStorage()
     # storage = RedisStorage.from_url(url=f"redis://{settings.REDIS_HOST}")
