@@ -20,5 +20,5 @@ jobs:
           pip3 install --no-cache-dir pylint
       - name: Run flake8
         run: flake8 .
-      - name Run Pylint
+      - name: Run Pylint
       - run: pylint app
