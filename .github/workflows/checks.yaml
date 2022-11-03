@@ -17,6 +17,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip3 install --no-cache-dir --upgrade pip
-          pip3 install --no-cache-dir flake8, flake8-bugbear, flake8-bugbear
+          pip3 install --no-cache-dir flake8
+          pip3 install --no-cache-dir flake8-bugbear
       - name: Run flake8
         run: flake8 .
