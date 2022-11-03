@@ -1,4 +1,4 @@
-name: CodeChecker
+name: Checker
 
 on:
   push:
