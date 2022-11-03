@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 def create_async_engine(url: Union[URL, str]) -> AsyncEngine:
-    return _create_async_engine(url=url, encoding='utf-8')
+    return _create_async_engine(url=url, encoding="utf-8")
 
 
 async def proceed_schemas(engine: AsyncEngine, metadata: MetaData) -> None:

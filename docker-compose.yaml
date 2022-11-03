@@ -10,6 +10,12 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+  redis:
+    container_name: redis
+    image: "redis:7.0-alpine"
+    ports:
+      - "6379:6379"
+    restart: "unless-stopped"
   bot:
     container_name: app
     build:
@@ -21,3 +27,4 @@ services:
     restart: "unless-stopped"
     depends_on:
       - postgres
+      - redis

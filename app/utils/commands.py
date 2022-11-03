@@ -15,11 +15,11 @@ async def set_commands(bot: Bot) -> None:
     commands = [
         BotCommand(
             command="start",
-            description="Начать",
-        )
+            description="start bot",
+        ),
     ]
 
     await bot.set_my_commands(
         commands=commands,
-        scope=BotCommandScopeDefault()
+        scope=BotCommandScopeDefault(),
     )

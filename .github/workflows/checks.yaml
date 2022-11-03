@@ -3,6 +3,8 @@ name: CodeChecker
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -15,9 +17,6 @@ jobs:
       - name: Install Dependencies
         run: |
           pip3 install --no-cache-dir --upgrade pip
-          pip3 install --no-cache-dir flake8
-          pip3 install --no-cache-dir pylint
+          pip3 install --no-cache-dir flake8, flake8-bugbear, flake8-bugbear
       - name: Run flake8
         run: flake8 .
-      - name: Run Pylint
-      - run: pylint app

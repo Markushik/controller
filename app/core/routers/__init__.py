@@ -19,7 +19,7 @@ def setup_routers() -> Router:
     router = Router()
     router.include_router(client.router)
 
-    router.message.register(start, Command(commands=['start']))
+    router.message.register(start, Command(commands=["start"]))
 
     router.message.register(RegisterCheck)
     router.callback_query.register(RegisterCheck)

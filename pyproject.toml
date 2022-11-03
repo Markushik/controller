@@ -7,19 +7,18 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-dynaconf = "^3.1.11"
-loguru = "^0.6.0"
 aiogram = "^3.0.0b5"
-flake8 = "^5.0.4"
 asyncpg = "^0.27.0"
-mypy = "^0.982"
-sqlalchemy = "^1.4.42"
-pylint = "^2.15.5"
+dynaconf = "^3.1.11"
+flake8 = "^5.0.4"
+flake8-bugbear = "^22.10.27"
+flake8-bugbear = "^2.1.0"
 greenlet = "^2.0.0"
+loguru = "^0.6.0"
+redis = "^4.3.4"
+setuptools = "^65.5.0"
+sqlalchemy = "^1.4.42"
 
-[[tool.mypy.overrides]]
-module = "sqlalchemy.*"
-ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core"]

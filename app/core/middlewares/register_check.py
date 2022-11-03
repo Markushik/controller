@@ -13,13 +13,15 @@ class RegisterCheck(BaseMiddleware):
             self,
             handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
             event: Union[Message, CallbackQuery],
-            data: Dict[str, Any]
+            data: Dict[str, Any],
     ) -> Any:
         session_maker: sessionmaker = data['session_maker']
 
         async with session_maker() as session:
             async with session.begin():
-                result = await session.execute(select(User).where(User.user_id == event.from_user.id))
+                result = await session.execute(
+                    select(User).where(User.user_id == event.from_user.id),
+                )
                 user: User = result.one_or_none()
 
                 if user is not None:
@@ -27,13 +29,13 @@ class RegisterCheck(BaseMiddleware):
                 else:
                     user = User(
                         user_id=event.from_user.id,
-                        username=event.from_user.username
+                        username=event.from_user.username,
                     )
                     await session.merge(user)
 
                     if isinstance(event, Message):
-                        await event.answer('Ты успешно зарегистрирован(а)!')
+                        await event.answer('Ты зареган!')
                     else:
-                        await event.message.answer('Ты успешно зарегистрирован(а)!')
+                        await event.message.answer('Ты зареган!')
 
         return await handler(event, data)
