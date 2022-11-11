@@ -7,10 +7,9 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 router = Router()
-router.message.filter(Command(commands=["settings"]))
 
 
-@router.message(Command(commands="settings"))
+@router.message(Command(commands="start"))
 async def cmd_settings(message: Message) -> None:
     """
     Handling the "/settings" command
