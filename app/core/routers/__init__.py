@@ -2,12 +2,11 @@
 The file responsible for initializing routers
 """
 
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.filters import Command
 
-from . import client
-from .routers import start
-from ..middlewares.register_check import RegisterCheck
+from .routers import start, add_title_subscription, add_months_subscription
+from ..states.storage import Form
 
 
 def setup_routers() -> Router:
@@ -17,11 +16,10 @@ def setup_routers() -> Router:
     """
 
     router = Router()
-    router.include_router(client.router)
+    router.include_router(routers.router)
 
     router.message.register(start, Command(commands=["start"]))
 
-    router.message.register(RegisterCheck)
-    router.callback_query.register(RegisterCheck)
+    router.callback_query.register(add_title_subscription, F.data == "add_data")
 
     return router
