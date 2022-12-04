@@ -3,7 +3,6 @@ The file responsible for use commands in bot
 """
 
 from aiogram import Router
-from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
@@ -23,12 +22,40 @@ async def start(message: Message) -> None:
 
 async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
     await state.set_state(Form.title)
-
     await query.message.edit_text(
-        text="<b>Как называется ваша подписка?</b>"
+        text="<b>Введите название вашей подписки</b>"
+    )
+    await query.answer()
+
+
+@router.callback_query(Form.title)
+async def add_months_subscription(query: CallbackQuery, state: FSMContext) -> None:
+    await state.update_data(title=query.message.text)
+    await state.set_state(Form.months)
+    await query.message.answer(
+        text="<b>Введите количетсво месяцев</b>"
     )
 
 
-@router.message(Form.title)
-async def add_months_subscription(message: Message, state: FSMContext) -> None:
-    await message.delete()
+async def add_deadline_subscription(message: Message, state: FSMContext) -> None:
+    await state.update_data(months=message.text)
+    await state.set_state(Form.deadline)
+    await message.answer(
+        text="<b>Введите окончание подписки</b>"
+    )
+
+
+async def viewing_results(message: Message, state: FSMContext) -> None:
+    await state.update_data(deadline=message.text)
+    user_data = await state.get_data()
+
+    await message.answer(
+        text="Проверьте правильность введенных данных:\n"
+             f"Наименование: {user_data['title']}\n"
+             f"Длительность: {user_data['months']}\n"
+             f"Окончание: {user_data['deadline']}\n",
+        reply_markup=get_confirm_or_reject_keyboard()
+    )
+
+async def confirm_result(message: Message, state: FSMContext) -> None:
+    await message.answer("все норм")
