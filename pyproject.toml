@@ -19,7 +19,7 @@ aiogram = "^3.0.0b6"
 
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "^5.0.4"
+flake8 = "^6.0.0"
 flake8-bugbear = "^22.10.27"
 
 [build-system]

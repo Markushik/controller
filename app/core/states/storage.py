@@ -5,4 +5,5 @@ class Form(StatesGroup):
     title = State()
     months = State()
     deadline = State()
+    reminder = State()
     form = State()
