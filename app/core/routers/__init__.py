@@ -11,6 +11,11 @@ from .routers import start, \
     viewing_results, \
     confirm_result
 
+__all__ = [
+    'start', 'add_title_subscription', 'add_deadline_subscription',
+    'add_months_subscription', 'viewing_results', 'confirm_result'
+]
+
 
 def setup_routers() -> Router:
     """

@@ -63,22 +63,22 @@ async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> Non
         text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
              "<b>Пример:</b> <code>Tinkoff Pro</code>"
     )
-    await state.set_state(Form.title)
+    await state.set_state(Form.service)
     await query.answer()
 
 
 @router.callback_query(F.data == "reject_data")
-async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
+async def restrart_add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_text(
         text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
              "<b>Пример:</b> <code>Tinkoff Pro</code>"
     )
     await state.clear()
-    await state.set_state(Form.title)
+    await state.set_state(Form.service)
     await query.answer()
 
 
-@router.message(Form.title)
+@router.message(Form.service)
 async def add_months_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(title=message.text)
     await message.answer(

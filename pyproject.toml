@@ -14,13 +14,12 @@ redis = "^4.3.4"
 setuptools = "^65.5.0"
 sqlalchemy = "^1.4.42"
 alembic = "^1.8.1"
-psycopg2 = "^2.9.5"
 aiogram = "^3.0.0b6"
 
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
-flake8-bugbear = "^22.10.27"
+flake8-bugbear = "^22.12.6"
 
 [build-system]
 requires = ["poetry-core"]
