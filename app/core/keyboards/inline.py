@@ -11,15 +11,19 @@ def get_main_menu():
         ],
         [
             InlineKeyboardButton(
+                text="👤 Аккаунт",
+                callback_data="account_data"
+            ),
+            InlineKeyboardButton(
                 text="💰 Донаты",
                 callback_data="donate_data"
-            ),
+            )
+        ],
+        [
             InlineKeyboardButton(
                 text="🆘 Поддержка",
                 url="https://t.me/m_arqez/"
             ),
-        ],
-        [
             InlineKeyboardButton(
                 text="📊 Статистика",
                 callback_data="statistics_data"

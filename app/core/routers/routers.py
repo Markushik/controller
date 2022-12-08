@@ -20,8 +20,6 @@ from app.core.states.storage import Form
 router = Router()
 
 
-# TODO: Синхронизировать flake8 с pyproject.toml (flake9)
-
 @router.message(Command(commands=["start"]))
 async def start(message: Message) -> None:
     await message.answer(
@@ -42,7 +40,8 @@ async def start_first_reserve(query: CallbackQuery) -> None:
 @router.callback_query(F.data == "first_back_data")
 async def start_second_reserve(query: CallbackQuery) -> None:
     await query.message.edit_text(
-        text="<b>Что вы хотите сделать?</b>\n\n",
+        text="<b>🗂️ Каталог активных подписок:</b>\n\n"
+             "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
         reply_markup=get_subscription_actions(),
     )
     await query.answer()
@@ -51,7 +50,8 @@ async def start_second_reserve(query: CallbackQuery) -> None:
 @router.callback_query(F.data == "actions_data")
 async def start_reserve(query: CallbackQuery) -> None:
     await query.message.edit_text(
-        text="<b>Что вы хотите сделать?</b>\n\n",
+        text="<b>🗂️ Каталог активных подписок:</b>\n\n"
+             "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
         reply_markup=get_subscription_actions(),
     )
     await query.answer()
@@ -68,7 +68,7 @@ async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> Non
 
 
 @router.callback_query(F.data == "reject_data")
-async def restrart_add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
+async def restart_add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_text(
         text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
              "<b>Пример:</b> <code>Tinkoff Pro</code>"
