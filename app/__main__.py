@@ -17,11 +17,6 @@ from app.core.routers import setup_routers
 from app.utils.commands import set_commands
 
 
-# TODO: 1) Синхронизировать flake8 с pyproject.toml (flake9)
-# TODO: 2) Сделать ограничение на количество подписок (5)
-# TODO: 3) Решить проблему с ORM
-# TODO: 4)
-
 async def _main() -> None:
     """
     The main function responsible for launching the bot

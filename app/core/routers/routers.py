@@ -4,10 +4,11 @@ The file responsible for use commands in bot
 
 from datetime import datetime
 
+import aiofiles
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputMediaPhoto, FSInputFile, InputFile, URLInputFile
 
 from app.core.keyboards.inline import \
     get_confirm_or_reject_keyboard, \
@@ -22,9 +23,9 @@ router = Router()
 
 @router.message(Command(commands=["start"]))
 async def start(message: Message) -> None:
-    await message.answer(
-        text="<b>👨‍✈️ CONTROLLER</b> — время напомнить об истечении твоей подписки\n\n",
-        reply_markup=get_main_menu(),
+    await message.answer_photo(
+        photo="https://i.postimg.cc/xj8Njpnr/main.png?dl=1",
+        reply_markup=get_main_menu()
     )
 
 
@@ -68,7 +69,7 @@ async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> Non
 
 
 @router.callback_query(F.data == "reject_data")
-async def restart_add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
+async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_text(
         text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
              "<b>Пример:</b> <code>Tinkoff Pro</code>"
@@ -154,13 +155,24 @@ async def confirm_result(query: CallbackQuery) -> None:
     await query.answer()
 
 
-@router.callback_query(F.data == "donate_data")
-async def author_support(query: CallbackQuery) -> None:
+# @router.callback_query(F.data == "donate_data")
+# async def author_support(query: CallbackQuery) -> None:
+#     await query.message.edit_media(
+#         media=URLInputFile(url="https://i.postimg.cc/xj8Njpnr/main.png?dl=1")
+#     )
+#     await query.answer()
+
+
+@router.callback_query(F.data == "account_data")
+async def account_data(query: CallbackQuery) -> None:
     await query.message.edit_text(
-        text="<b>Как вы хотите поддержать автора?</b>",
-        reply_markup=get_donate_menu()
+        text=f"<b>🆔 Ваш ID:</b> <code>{query.from_user.id}</code>\n"
+             f"<b>🗓️ Регистрация:</b> <code>08.12.2022</code>\n"
+             f"<b>Подписок:</b> <code>15</code>\n"
+             f"<b>👥 Приглашено:</b> <code>5</code>\n\n"
+             f"<b>🔗 Реферальная ссылка:</b>\n"
+             f"<code>https://t.me/jopagamebot?start={query.from_user.id}</code>"
     )
-    await query.answer()
 
 
 @router.callback_query(F.data == "statistics_data")
