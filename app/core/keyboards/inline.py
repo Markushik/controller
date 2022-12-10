@@ -15,14 +15,14 @@ def get_main_menu():
                 callback_data="account_data"
             ),
             InlineKeyboardButton(
-                text="💰 Донаты",
-                callback_data="donate_data"
-            )
+                text="🆘 Поддержка",
+                url="https://t.me/m_arqez/"
+            ),
         ],
         [
             InlineKeyboardButton(
-                text="🆘 Поддержка",
-                url="https://t.me/m_arqez/"
+                text="💰 Донаты",
+                callback_data="donate_data"
             ),
             InlineKeyboardButton(
                 text="📊 Статистика",
@@ -88,16 +88,23 @@ def get_donate_menu():
     return keyboard
 
 
-# def get_main_back_menu():
-#     buttons = [
-#         [
-#             InlineKeyboardButton(
-#                 text="↩️ Вернуться"
-#             )  # callback
-#         ]
-#     ]
-#     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-#     return keyboard
+def get_main_back_menu():
+    buttons = [
+        [
+            InlineKeyboardButton(
+                text="Поделиться",
+                switch_inline_query=''  # TODO: Указать ссылку с id юзера который отправляет
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="↩️ Вернуться",
+                callback_data="back_data"
+            )
+        ],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
 
 
 def get_first_back_reserve_menu():

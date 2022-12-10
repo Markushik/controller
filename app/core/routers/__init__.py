@@ -12,7 +12,7 @@ from .routers import start, \
     confirm_result
 
 __all__ = [
-    'start', 'add_title_subscription', 'add_deadline_subscription',
+    'setup_routers', 'start', 'add_title_subscription', 'add_deadline_subscription',
     'add_months_subscription', 'viewing_results', 'confirm_result'
 ]
 

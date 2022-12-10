@@ -5,7 +5,6 @@ The main file responsible for launching the bot
 import asyncio
 
 from aiogram import Bot, Dispatcher
-# from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
 from loguru import logger
 from sqlalchemy.engine import URL
@@ -17,11 +16,6 @@ from app.core.routers import setup_routers
 from app.utils.commands import set_commands
 
 
-# TODO: 1) Синхронизировать flake8 с pyproject.toml (flake9)
-# TODO: 2) Сделать ограничение на количество подписок (5)
-# TODO: 3) Решить проблему с ORM
-# TODO: 4)
-
 async def _main() -> None:
     """
     The main function responsible for launching the bot
@@ -30,8 +24,7 @@ async def _main() -> None:
     logger.info("START BOT")
 
     storage = RedisStorage.from_url(url=f"redis://{settings.REDIS_HOST}")
-    # storage = MemoryStorage()
-    bot = Bot(settings.API_TOKEN, parse_mode="HTML")
+    bot = Bot(token=settings.API_TOKEN, parse_mode="HTML")
     disp = Dispatcher(storage=storage)
 
     postgres_url = URL.create(

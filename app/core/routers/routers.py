@@ -7,32 +7,41 @@ from datetime import datetime
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile, InputMediaPhoto
+from aioredis import Redis
 
 from app.core.keyboards.inline import \
     get_confirm_or_reject_keyboard, \
     get_subscription_actions, \
     get_main_menu, \
-    get_donate_menu, \
-    get_first_back_reserve_menu
+    get_first_back_reserve_menu, get_donate_menu, get_main_back_menu
 from app.core.states.storage import Form
 
 router = Router()
+redis = Redis()
 
 
-@router.message(Command(commands=["start"]))
+def get_datetime() -> str:
+    return str(datetime.now())
+
+
+@router.message(Command(commands=["start"]))  # TODO: Реферальная система
 async def start(message: Message) -> None:
-    await message.answer(
-        text="<b>👨‍✈️ CONTROLLER</b> — время напомнить об истечении твоей подписки\n\n",
-        reply_markup=get_main_menu(),
+    await redis.set(str(message.from_user.id), get_datetime(), nx=True)
+    await redis.sadd("users_count", str(message.from_user.id))
+
+    await message.answer_photo(
+        photo=FSInputFile("C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"),
+        reply_markup=get_main_menu()
     )
 
 
 @router.callback_query(F.data == "back_data")
 async def start_first_reserve(query: CallbackQuery) -> None:
-    await query.message.edit_text(
-        text="<b>👨‍✈️ CONTROLLER</b> — время напомнить об истечении твоей подписки\n\n",
-        reply_markup=get_main_menu(),
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=FSInputFile('C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png')),
+        reply_markup=get_main_menu()
     )
     await query.answer()
 
@@ -68,7 +77,7 @@ async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> Non
 
 
 @router.callback_query(F.data == "reject_data")
-async def restart_add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
+async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_text(
         text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
              "<b>Пример:</b> <code>Tinkoff Pro</code>"
@@ -113,7 +122,7 @@ async def add_reminder_subscription(message: Message, state: FSMContext) -> None
     try:
         datetime.strptime(message.text, '%d.%m.%Y')
         pass
-    except Exception:
+    except ValueError:
         await message.answer(text="<b>🚫 Ошибка:</b> Неверный формат")
         return
 
@@ -156,10 +165,33 @@ async def confirm_result(query: CallbackQuery) -> None:
 
 @router.callback_query(F.data == "donate_data")
 async def author_support(query: CallbackQuery) -> None:
-    await query.message.edit_text(
-        text="<b>Как вы хотите поддержать автора?</b>",
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=FSInputFile('C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png')),
         reply_markup=get_donate_menu()
     )
+    await query.answer()
+
+
+@router.callback_query(F.data == "account_data")
+async def account_data(query: CallbackQuery) -> None:
+    date = await redis.get(str(query.from_user.id))
+    users = await redis.scard("users_count")
+
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=FSInputFile('C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png')),
+    )
+    await query.message.edit_caption(
+        caption=f"<b>🆔 Ваш ID:</b> <code>{query.from_user.id}</code>\n"
+                f"<b>🗓️ Регистрация:</b> <code>{str(date, 'utf-8')[:-7]}</code>\n"
+                f"<b>Подписок:</b> <code>15</code>\n"
+                f"<b>👥 Приглашено:</b> <code>5 (чел.)</code>\n\n"
+                f"<b>🔗 Реферальная ссылка:</b>\n"
+                f"<code>https://t.me/jopagamebot?start={query.from_user.id}</code>",
+        reply_markup=get_main_back_menu()
+    )
+
     await query.answer()
 
 
