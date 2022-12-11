@@ -93,7 +93,7 @@ def get_main_back_menu():
         [
             InlineKeyboardButton(
                 text="Поделиться",
-                switch_inline_query=''  # TODO: Указать ссылку с id юзера который отправляет
+                switch_inline_query=''
             )
         ],
         [

@@ -31,32 +31,14 @@ async def start(message: Message) -> None:
     await redis.sadd("users_count", str(message.from_user.id))
 
     await message.answer_photo(
-        photo=FSInputFile("C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"),
+        photo=FSInputFile(
+            "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+        ),
         reply_markup=get_main_menu()
     )
 
 
-@router.callback_query(F.data == "back_data")
-async def start_first_reserve(query: CallbackQuery) -> None:
-    await query.message.edit_media(
-        media=InputMediaPhoto(
-            media=FSInputFile('C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png')),
-        reply_markup=get_main_menu()
-    )
-    await query.answer()
-
-
-@router.callback_query(F.data == "first_back_data")
-async def start_second_reserve(query: CallbackQuery) -> None:
-    await query.message.edit_text(
-        text="<b>🗂️ Каталог активных подписок:</b>\n\n"
-             "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
-        reply_markup=get_subscription_actions(),
-    )
-    await query.answer()
-
-
-@router.callback_query(F.data == "actions_data")
+@router.callback_query(F.data == "actions_data")  # Действия с подписками
 async def start_reserve(query: CallbackQuery) -> None:
     await query.message.edit_text(
         text="<b>🗂️ Каталог активных подписок:</b>\n\n"
@@ -66,23 +48,12 @@ async def start_reserve(query: CallbackQuery) -> None:
     await query.answer()
 
 
-@router.callback_query(F.data == "add_data")
+@router.callback_query(F.data == "add_data")  # Добавить
 async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_text(
         text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
              "<b>Пример:</b> <code>Tinkoff Pro</code>"
     )
-    await state.set_state(Form.service)
-    await query.answer()
-
-
-@router.callback_query(F.data == "reject_data")
-async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
-    await query.message.edit_text(
-        text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
-             "<b>Пример:</b> <code>Tinkoff Pro</code>"
-    )
-    await state.clear()
     await state.set_state(Form.service)
     await query.answer()
 
@@ -155,20 +126,45 @@ async def viewing_results(message: Message, state: FSMContext) -> None:
 
 
 @router.callback_query(F.data == "confirm_data")
-async def confirm_result(query: CallbackQuery) -> None:
+async def confirm_result(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_text(
         text="<b>✅ Успех:</b> Данные были успешно записаны",
         reply_markup=get_first_back_reserve_menu()
     )
+    await state.clear()
     await query.answer()
 
 
-@router.callback_query(F.data == "donate_data")
-async def author_support(query: CallbackQuery) -> None:
+@router.callback_query(F.data == "reject_data")
+async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
+    await query.message.edit_text(
+        text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
+             "<b>Пример:</b> <code>Tinkoff Pro</code>"
+    )
+    await state.clear()
+    await state.set_state(Form.service)
+    await query.answer()
+
+
+@router.callback_query(F.data == "first_back_data")
+async def start_second_reserve(query: CallbackQuery) -> None:
+    await query.message.edit_text(
+        text="<b>🗂️ Каталог активных подписок:</b>\n\n"
+             "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
+        reply_markup=get_subscription_actions(),
+    )
+    await query.answer()
+
+
+@router.callback_query(F.data == "back_data")
+async def start_first_reserve(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile('C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png')),
-        reply_markup=get_donate_menu()
+            media=FSInputFile(
+                'C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png'
+            )
+        ),
+        reply_markup=get_main_menu()
     )
     await query.answer()
 
@@ -176,11 +172,13 @@ async def author_support(query: CallbackQuery) -> None:
 @router.callback_query(F.data == "account_data")
 async def account_data(query: CallbackQuery) -> None:
     date = await redis.get(str(query.from_user.id))
-    users = await redis.scard("users_count")
 
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile('C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png')),
+            media=FSInputFile(
+                'C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png'
+            )
+        ),
     )
     await query.message.edit_caption(
         caption=f"<b>🆔 Ваш ID:</b> <code>{query.from_user.id}</code>\n"
@@ -195,8 +193,22 @@ async def account_data(query: CallbackQuery) -> None:
     await query.answer()
 
 
+@router.callback_query(F.data == "donate_data")
+async def author_support(query: CallbackQuery) -> None:
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=FSInputFile(
+                'C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png'
+            )
+        ),
+        reply_markup=get_donate_menu()
+    )
+    await query.answer()
+
+
 @router.callback_query(F.data == "statistics_data")
 async def users_statistics(query: CallbackQuery) -> None:
+    # users = await redis.scard("users_count")
     await query.message.edit_text(
         text="test"  # web-app
     )
