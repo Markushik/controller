@@ -1,14 +1,17 @@
 """
 The file responsible for use commands in bot
 """
-
 from datetime import datetime
 
+from aiogram import Bot
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, FSInputFile, InputMediaPhoto
+from aiogram.utils.deep_linking import create_start_link
 from aioredis import Redis
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 from app.core.keyboards.inline import \
     get_confirm_or_reject_keyboard, \
@@ -38,11 +41,16 @@ async def start(message: Message) -> None:
     )
 
 
-@router.callback_query(F.data == "actions_data")  # Действия с подписками
+@router.callback_query(F.data == "actions_data")
 async def start_reserve(query: CallbackQuery) -> None:
-    await query.message.edit_text(
-        text="<b>🗂️ Каталог активных подписок:</b>\n\n"
-             "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=FSInputFile(
+                'C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png'
+            ),
+            caption="<b>🗂️ Каталог активных подписок:</b>\n\n"
+                    "У вас не имеется <b>активных</b> подписок 🤷‍♂️"
+        ),
         reply_markup=get_subscription_actions(),
     )
     await query.answer()
@@ -50,10 +58,16 @@ async def start_reserve(query: CallbackQuery) -> None:
 
 @router.callback_query(F.data == "add_data")  # Добавить
 async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
-    await query.message.edit_text(
-        text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
-             "<b>Пример:</b> <code>Tinkoff Pro</code>"
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=FSInputFile(
+                'C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png'
+            ),
+            caption="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
+                    "<b>Пример:</b> <code>Tinkoff Premium</code>"
+        )
     )
+
     await state.set_state(Form.service)
     await query.answer()
 
@@ -120,13 +134,18 @@ async def viewing_results(message: Message, state: FSMContext) -> None:
              f"<b>Сервис:</b> <code>{user_data['title']}</code>\n"
              f"<b>Длительность:</b> <code>{user_data['months']} (мес.)</code>\n"
              f"<b>Окончание:</b> <code>{user_data['deadline']}</code>\n"
-             f"<b>Оповестить за:</b> <code>{user_data['reminder']} (д.)</code>",
+             f"<b>Оповестить за</b> <code>{user_data['reminder']} (д.)</code>",
         reply_markup=get_confirm_or_reject_keyboard()
     )
 
 
 @router.callback_query(F.data == "confirm_data")
-async def confirm_result(query: CallbackQuery, state: FSMContext) -> None:
+async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker: sessionmaker) -> None:
+    async with session_maker() as session:
+        async with session.begin():
+            session: AsyncSession
+            await session.commit()
+
     await query.message.edit_text(
         text="<b>✅ Успех:</b> Данные были успешно записаны",
         reply_markup=get_first_back_reserve_menu()
@@ -148,9 +167,14 @@ async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
 
 @router.callback_query(F.data == "first_back_data")
 async def start_second_reserve(query: CallbackQuery) -> None:
-    await query.message.edit_text(
-        text="<b>🗂️ Каталог активных подписок:</b>\n\n"
-             "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=FSInputFile(
+                'C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png'
+            ),
+            caption="<b>🗂️ Каталог активных подписок:</b>\n\n"
+                    "У вас не имеется <b>активных</b> подписок 🤷‍♂️"
+        ),
         reply_markup=get_subscription_actions(),
     )
     await query.answer()
@@ -170,26 +194,24 @@ async def start_first_reserve(query: CallbackQuery) -> None:
 
 
 @router.callback_query(F.data == "account_data")
-async def account_data(query: CallbackQuery) -> None:
+async def account_data(query: CallbackQuery, bot: Bot) -> None:
     date = await redis.get(str(query.from_user.id))
+    link = await create_start_link(bot=bot, payload=str(query.from_user.id), encode=True)
 
     await query.message.edit_media(
         media=InputMediaPhoto(
             media=FSInputFile(
                 'C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png'
-            )
+            ),
+            caption=f"<b>🆔 Ваш ID:</b> <code>{query.from_user.id}</code>\n"
+                    f"<b>📅 Регистрация:</b> <code>{str(date, 'utf-8')[:-7]}</code>\n"
+                    f"<b>👥 Приглашено:</b> <code>5 (чел.)</code>\n\n"
+            # #202 Редиска считает кол-во переходов по ссылке и выводит значение
+                    f"<b>🔗 Ваша реферальная ссылка:</b>\n"
+                    f"<code>{link}</code>"
         ),
+        reply_markup=get_main_back_menu(),
     )
-    await query.message.edit_caption(
-        caption=f"<b>🆔 Ваш ID:</b> <code>{query.from_user.id}</code>\n"
-                f"<b>🗓️ Регистрация:</b> <code>{str(date, 'utf-8')[:-7]}</code>\n"
-                f"<b>Подписок:</b> <code>15</code>\n"
-                f"<b>👥 Приглашено:</b> <code>5 (чел.)</code>\n\n"
-                f"<b>🔗 Реферальная ссылка:</b>\n"
-                f"<code>https://t.me/jopagamebot?start={query.from_user.id}</code>",
-        reply_markup=get_main_back_menu()
-    )
-
     await query.answer()
 
 
@@ -209,7 +231,5 @@ async def author_support(query: CallbackQuery) -> None:
 @router.callback_query(F.data == "statistics_data")
 async def users_statistics(query: CallbackQuery) -> None:
     # users = await redis.scard("users_count")
-    await query.message.edit_text(
-        text="test"  # web-app
-    )
+    pass
     await query.answer()
