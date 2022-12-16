@@ -15,7 +15,6 @@ setuptools = "^65.5.0"
 sqlalchemy = "^1.4.42"
 alembic = "^1.8.1"
 aiogram = "^3.0.0b6"
-aiohttp-socks = "^0.7.1"
 aioredis = "^2.0.1"
 
 
@@ -23,10 +22,11 @@ aioredis = "^2.0.1"
 flake8 = "^6.0.0"
 flake8-bugbear = "^22.12.6"
 flake8-pyproject = "^1.2.2"
+isort = "^5.11.2"
 
 [tool.flake8]
 ignore = ['F821']
-max-line-length = 88
+max-line-length = 120
 
 
 [build-system]

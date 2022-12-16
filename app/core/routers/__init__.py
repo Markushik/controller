@@ -4,12 +4,9 @@ The file responsible for initializing routers
 
 from aiogram import Router
 
-from .routers import start, \
-    add_title_subscription, \
-    add_months_subscription, \
-    add_deadline_subscription, \
-    viewing_results, \
-    confirm_result
+from .routers import (add_deadline_subscription, add_months_subscription,
+                      add_title_subscription, confirm_result, start,
+                      viewing_results)
 
 __all__ = [
     'setup_routers', 'start', 'add_title_subscription', 'add_deadline_subscription',

@@ -10,11 +10,10 @@ from loguru import logger
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.config import settings
-from app.core.database import get_session_maker, proceed_schemas, BaseModel
-from app.core.middlewares.register_check import CounterMiddleware
+from app.core.database import BaseModel, get_session_maker, proceed_schemas
 from app.core.routers import setup_routers
 from app.utils.commands import set_commands
+from config import settings
 
 
 async def _main() -> None:
@@ -38,9 +37,6 @@ async def _main() -> None:
 
     router = setup_routers()
     disp.include_router(router)
-
-    disp.message.middleware(CounterMiddleware())
-    disp.callback_query.middleware(CounterMiddleware())
 
     async_engine = create_async_engine(postgres_url)
     session_maker = get_session_maker(async_engine)

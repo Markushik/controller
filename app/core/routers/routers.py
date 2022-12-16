@@ -3,21 +3,22 @@ The file responsible for use commands in bot
 """
 from datetime import datetime
 
-from aiogram import Bot
-from aiogram import Router, F
+from aiogram import Bot, F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, FSInputFile, InputMediaPhoto
+from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto, Message
 from aiogram.utils.deep_linking import create_start_link
 from aioredis import Redis
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from app.core.keyboards.inline import \
-    get_confirm_or_reject_keyboard, \
-    get_subscription_actions, \
-    get_main_menu, \
-    get_first_back_reserve_menu, get_donate_menu, get_main_back_menu
+from app.core.database import User
+from app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
+                                       get_donate_menu,
+                                       get_first_back_reserve_menu,
+                                       get_main_back_menu, get_main_menu,
+                                       get_subscription_actions)
 from app.core.states.storage import Form
 
 router = Router()
@@ -144,6 +145,12 @@ async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker:
     async with session_maker() as session:
         async with session.begin():
             session: AsyncSession
+            await session.execute(
+                select(User)
+                .where(User.user_id == query.message.from_user.id)
+                .where(User.username == query.message.from_user.username)
+            )
+
             await session.commit()
 
     await query.message.edit_text(

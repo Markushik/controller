@@ -1,4 +1,4 @@
-from sqlalchemy import Column, VARCHAR, DATE, BIGINT, INT
+from sqlalchemy import BIGINT, DATE, INT, VARCHAR, Column
 
 from .base import BaseModel
 
