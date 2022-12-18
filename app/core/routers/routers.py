@@ -9,8 +9,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto, Message
 from aiogram.utils.deep_linking import create_start_link
 from aioredis import Redis
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from app.core.database import User
@@ -29,10 +27,21 @@ def get_datetime() -> str:
     return str(datetime.now())
 
 
-@router.message(Command(commands=["start"]))  # TODO: Реферальная система
-async def start(message: Message) -> None:
+@router.message(Command(commands=["start"]))
+async def start(message: Message, session_maker: sessionmaker) -> None:
     await redis.set(str(message.from_user.id), get_datetime(), nx=True)
     await redis.sadd("users_count", str(message.from_user.id))
+
+    async with session_maker() as session:
+        async with session.begin():
+            session.add(
+                User(
+                    user_id=int(message.from_user.id),
+                    user_name=str(message.from_user.first_name)
+
+                )
+            )
+            await session.commit()
 
     await message.answer_photo(
         photo=FSInputFile(
@@ -141,18 +150,7 @@ async def viewing_results(message: Message, state: FSMContext) -> None:
 
 
 @router.callback_query(F.data == "confirm_data")
-async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker: sessionmaker) -> None:
-    async with session_maker() as session:
-        async with session.begin():
-            session: AsyncSession
-            await session.execute(
-                select(User)
-                .where(User.user_id == query.message.from_user.id)
-                .where(User.username == query.message.from_user.username)
-            )
-
-            await session.commit()
-
+async def confirm_result(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_text(
         text="<b>✅ Успех:</b> Данные были успешно записаны",
         reply_markup=get_first_back_reserve_menu()
