@@ -16,5 +16,5 @@ class Service(BaseModel):
     service_id = Column(INT, autoincrement=True, primary_key=True)
     service = Column(VARCHAR(32), unique=False, nullable=True)
     months = Column(INT, nullable=True)
-    deadline = Column(DATE, nullable=True)
+    deadline = Column(VARCHAR(12), nullable=True)
     reminder = Column(INT, nullable=True)

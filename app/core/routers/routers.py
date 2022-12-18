@@ -12,6 +12,7 @@ from aioredis import Redis
 from sqlalchemy.orm import sessionmaker
 
 from app.core.database import User
+from app.core.database.tables import Service
 from app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
                                        get_donate_menu,
                                        get_first_back_reserve_menu,
@@ -150,11 +151,26 @@ async def viewing_results(message: Message, state: FSMContext) -> None:
 
 
 @router.callback_query(F.data == "confirm_data")
-async def confirm_result(query: CallbackQuery, state: FSMContext) -> None:
+async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker: sessionmaker) -> None:
+    user_data = await state.get_data()
+
     await query.message.edit_text(
         text="<b>✅ Успех:</b> Данные были успешно записаны",
         reply_markup=get_first_back_reserve_menu()
     )
+
+    async with session_maker() as session:
+        async with session.begin():
+            session.add(
+                Service(
+                    service=str(user_data['title']),
+                    months=int(user_data['months']),
+                    deadline=str(user_data['deadline']),
+                    reminder=int(user_data['reminder']),
+                )
+            )
+            await session.commit()
+
     await state.clear()
     await query.answer()
 

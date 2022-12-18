@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from app.core.database import BaseModel, get_session_maker, proceed_schemas
 from app.core.routers import setup_routers
 from app.utils.commands import set_commands
-from config import settings
+from app.utils.config import settings
 
 
 async def _main() -> None:
@@ -22,7 +22,7 @@ async def _main() -> None:
     :return:
     """
     logger.add("debug.log", format="{time} {level} {message}", level="DEBUG")
-    logger.info("LAUNCHING THE BOT")
+    logger.info("LAUNCHING BOT")
 
     storage_url = RedisStorage.from_url(url=f"redis://{settings.REDIS_HOST}")
     database_url = URL.create(
@@ -53,4 +53,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(_main())
     except (SystemExit, KeyboardInterrupt, ConnectionRefusedError):
-        logger.warning("SHUT OFF THE BOT")
+        logger.warning("SHUTDOWN BOT")
