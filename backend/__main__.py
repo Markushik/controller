@@ -10,10 +10,10 @@ from loguru import logger
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.core.database import BaseModel, get_session_maker, proceed_schemas
-from app.core.routers import setup_routers
-from app.utils.commands import set_commands
-from app.utils.config import settings
+from backend.core.database import get_session_maker, proceed_schemas, BaseModel
+from backend.core.routers import setup_routers
+from utils.commands import set_commands
+from utils.config import settings
 
 
 async def _main() -> None:
@@ -21,7 +21,7 @@ async def _main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logger.add("debug.log", format="{time} {level} {message}", level="DEBUG")
+    logger.add("../debug.log", format="{time} {level} {message}", level="DEBUG")
     logger.info("LAUNCHING BOT")
 
     storage_url = RedisStorage.from_url(url=f"redis://{settings.REDIS_HOST}")

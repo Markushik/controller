@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 
 
 def get_main_menu():
@@ -26,7 +26,7 @@ def get_main_menu():
             ),
             InlineKeyboardButton(
                 text="📊 Статистика",
-                callback_data="statistics_data"
+                web_app=WebAppInfo(url="https://google.com/")
             ),
         ]
     ]

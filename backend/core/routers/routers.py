@@ -6,19 +6,19 @@ from datetime import datetime
 from aiogram import Bot, F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto, Message
+from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto, Message, ContentType
 from aiogram.utils.deep_linking import create_start_link
 from aioredis import Redis
 from sqlalchemy.orm import sessionmaker
 
-from app.core.database import User
-from app.core.database.tables import Service
-from app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
-                                       get_donate_menu,
-                                       get_first_back_reserve_menu,
-                                       get_main_back_menu, get_main_menu,
-                                       get_subscription_actions)
-from app.core.states.storage import Form
+from backend.core.database import User
+from backend.core.database.tables import Service
+from backend.core.keyboards.inline import (get_confirm_or_reject_keyboard,
+                                           get_donate_menu,
+                                           get_first_back_reserve_menu,
+                                           get_main_back_menu, get_main_menu,
+                                           get_subscription_actions)
+from backend.core.states.storage import Form
 
 router = Router()
 redis = Redis()
@@ -33,16 +33,16 @@ async def start(message: Message, session_maker: sessionmaker) -> None:
     await redis.set(str(message.from_user.id), get_datetime(), nx=True)
     await redis.sadd("users_count", str(message.from_user.id))
 
-    async with session_maker() as session:
-        async with session.begin():
-            session.add(
-                User(
-                    user_id=int(message.from_user.id),
-                    user_name=str(message.from_user.first_name)
-
-                )
-            )
-            await session.commit()
+    # async with session_maker() as session:
+    #     async with session.begin():
+    #         session.add(
+    #             User(
+    #                 user_id=int(message.from_user.id),
+    #                 user_name=str(message.from_user.first_name)
+    #
+    #             )
+    #         )
+    #         await session.commit()
 
     await message.answer_photo(
         photo=FSInputFile(
@@ -249,8 +249,9 @@ async def author_support(query: CallbackQuery) -> None:
     await query.answer()
 
 
-@router.callback_query(F.data == "statistics_data")
+@router.message(F.content_type_in(ContentType.WEB_APP_DATA))
 async def users_statistics(query: CallbackQuery) -> None:
     # users = await redis.scard("users_count")
+    print("приветик")
     pass
     await query.answer()
