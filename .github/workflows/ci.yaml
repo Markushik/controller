@@ -19,7 +19,7 @@ jobs:
         run: pip3 install --no-cache-dir poetry
 
       - name: Install Dependencies
-        run: poetry install
+        run: poetry install --dev-dependency --no-cache
 
       - name: Show Tree
         run: poetry show --tree
