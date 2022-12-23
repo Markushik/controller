@@ -21,8 +21,10 @@ jobs:
          pip3 install --no-cache-dir --upgrade pip
          pip3 install --no-cache-dir poetry
       - name: Install Dependencies
-        run: poetry install --only dev --no-cache
-      - name: Start flake8
-        run: flake8 --ignore=E501,F821 ./backend/
+        run: |
+          poetry add flake8
+          poetry install --only dev
+      - name: Run flake8
+        run: flake8 ./backend/
 
 
