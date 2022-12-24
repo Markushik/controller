@@ -26,7 +26,7 @@ First of all, this is a pet-project that shows what technologies I work with and
         • loguru
 
 
-## 📄 Change logs
+## 📄 Change Log
     
     ...
     
