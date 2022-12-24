@@ -17,18 +17,19 @@ First of all, this is a pet-project that shows what technologies I work with and
     
     🔥 Frameworks
         
-        + aiogram
-        + alembic
-        + aioredis
-        + asyncpg
-        + sqlalchemy
-        + dynaconf
-        + loguru
+        • aiogram
+        • alembic
+        • aioredis
+        • asyncpg
+        • sqlalchemy
+        • dynaconf
+        • loguru
 
 
 ## 📄 Change logs
-
-    + ...
+    
+    ...
+    
 
 
 ## ✅ ToDo's
