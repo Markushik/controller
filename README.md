@@ -1,11 +1,11 @@
 # 👨‍✈️ CONTROLLER
 
-— is a bot for telegram that reminds me of the next debit when I use a subscription. first of all, 
+— is a bot for telegram that reminds me of the next debiting funds when I use a subscription. first of all, 
 it's a pet-project project that shows what technology I'm familiar with and what I'm capable of doing.
 
-**Project readiness:** [▋▋▋▋▋     ] (50%)
+🏃 **Project readiness:** [▋▋▋▋▋⠀⠀⠀⠀⠀] (50%)
 
-## Stack
+## 🚀 Stack
     
     ⚙️ Technologies
 
@@ -25,7 +25,7 @@ it's a pet-project project that shows what technology I'm familiar with and what
         • dynaconf
         • loguru
 
-## ToDo's
+## ✅ ToDo's
 
     1. Creating a referral system — ❌
     2. Create a bot design — ❌
