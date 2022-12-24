@@ -1,9 +1,9 @@
 # 👨‍✈️ CONTROLLER
 
 — is a bot for telegram that reminds me of the next debiting funds when I use a subscription. first of all, 
-it's a pet-project project that shows what technology I'm familiar with and what I'm capable of doing.
+it's a pet-project project that shows what technology I'm pet-project with and what I'm capable of doing.
 
-🏃 **Project readiness:** [▋▋▋▋▋⠀⠀⠀⠀⠀] (50%)
+🏃 **Project readiness:** [ ▋▋▋▋▋⠀⠀⠀⠀⠀ ] **(50%)**
 
 ## 🚀 Stack
     
