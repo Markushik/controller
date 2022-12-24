@@ -21,4 +21,4 @@ jobs:
       - name: Install Dependencies
         run: poetry install --only dev --no-root --no-interaction --no-ansi
       - name: Run flake8
-        run: flake8 ./backend/
+        run: poetry run flake8 ./backend/
