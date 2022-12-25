@@ -3,7 +3,7 @@
 — is a bot for telegram that reminds me of the next debiting funds when I use a subscription. 
 First of all, this is a pet-project that shows what technologies I work with and what I am capable of.
 
-🏃 **Project readiness:** [ ▋▋▋▋⠀⠀⠀⠀⠀ ] **(50%)**
+🏃 **Project readiness:** [ ▋▋▋▋⠀⠀⠀⠀⠀ ] **(40%)**
 
 ## 🚀 Stack
     
