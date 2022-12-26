@@ -10,8 +10,9 @@ from loguru import logger
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from backend.core.database import get_session_maker
-from backend.core.routers import setup_routers
+from backend.core.database import get_session_maker, BaseModel
+from backend.core.database.engine import proceed_schemas
+from backend.core.routers import routers
 from utils.commands import set_commands
 from utils.config import settings
 
@@ -34,14 +35,15 @@ async def _main() -> None:
     bot = Bot(token=settings.API_TOKEN, parse_mode="HTML")
     disp = Dispatcher(storage=storage_url)
 
-    router = setup_routers()
-    disp.include_router(router)
+    disp.include_router(routers.router)
+    # disp.include_router(errors.router)
 
     async_engine = create_async_engine(database_url)
     session_maker = get_session_maker(async_engine)
 
     try:
         await set_commands(bot)
+        await proceed_schemas(async_engine, BaseModel.metadata)
         await disp.start_polling(bot, session_maker=session_maker, allowed_updates=disp.resolve_used_update_types())
     finally:
         await disp.storage.close()

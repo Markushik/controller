@@ -6,7 +6,7 @@ from .base import BaseModel
 class User(BaseModel):
     __tablename__ = "users"
 
-    user_id = Column(BIGINT, unique=True, nullable=False, primary_key=True)
+    user_id = Column(INT, unique=True, nullable=False, primary_key=True)
     user_name = Column(VARCHAR(32), unique=False, nullable=True)
 
 

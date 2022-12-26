@@ -16,7 +16,7 @@ def get_main_menu():
         [
             InlineKeyboardButton(text="💰 Донаты", callback_data="donate_data"),
             InlineKeyboardButton(
-                text="📊 Статистика", web_app=WebAppInfo(url="https://google.com/")
+                text="📊 Статистика", web_app=WebAppInfo(url="https://markushik.github.io/controller/")
             ),
         ],
     ]

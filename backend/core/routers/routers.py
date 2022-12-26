@@ -10,16 +10,17 @@ from aiogram.types import (CallbackQuery, ContentType, FSInputFile,
                            InputMediaPhoto, Message)
 from aiogram.utils.deep_linking import create_start_link
 from aioredis import Redis
+from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
 # from backend.core.database import User
-from backend.core.database.tables import Service
+from backend.core.database.tables import Service, User
 from backend.core.keyboards.inline import (get_confirm_or_reject_keyboard,
                                            get_donate_menu,
                                            get_first_back_reserve_menu,
                                            get_main_back_menu, get_main_menu,
                                            get_subscription_actions)
-from backend.core.states.storage import Form
+from backend.core.states.user import Form
 
 router = Router()
 redis = Redis()
@@ -29,25 +30,42 @@ def get_datetime() -> str:
     return str(datetime.now())
 
 
+async def get_user(user_id: int, session_maker: sessionmaker) -> User:
+    async with session_maker() as session:
+        async with session.begin():
+            result = await session.execute(
+                select(User)
+                .filter(User.user_id == user_id)
+            )
+            return result.scalars().one()
+
+
+async def create_user(user_id: int, user_name: str, session_maker: sessionmaker) -> None:
+    async with session_maker() as session:
+        async with session.begin():
+            session.add(
+                User(
+                    user_id=user_id,
+                    user_name=user_name
+
+                )
+            )
+            await session.commit()
+
+
 @router.message(Command(commands=["start"]))
 async def start(message: Message, session_maker: sessionmaker) -> None:
     await redis.set(str(message.from_user.id), get_datetime(), nx=True)
     await redis.sadd("users_count", str(message.from_user.id))
 
-    # async with session_maker() as session:
-    #     async with session.begin():
-    #         session.add(
-    #             User(
-    #                 user_id=int(message.from_user.id),
-    #                 user_name=str(message.from_user.first_name)
-    #
-    #             )
-    #         )
-    #         await session.commit()
+    try:
+        await get_user(int(message.from_user.id), session_maker)
+    except Exception:
+        await create_user(int(message.from_user.id), str(message.from_user.first_name), session_maker)
 
     await message.answer_photo(
         photo=FSInputFile(
-            "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+            "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
         ),
         reply_markup=get_main_menu(),
     )
