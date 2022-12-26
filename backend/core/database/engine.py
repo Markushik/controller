@@ -1,3 +1,8 @@
+"""
+This file is responsible for the operation of sql_alchemy
+"""
+
+
 from typing import Union
 
 from sqlalchemy import MetaData

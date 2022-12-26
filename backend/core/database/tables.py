@@ -1,3 +1,7 @@
+"""
+This file contains table data
+"""
+
 from sqlalchemy import BIGINT, INT, VARCHAR, Column
 
 from .base import BaseModel
@@ -6,8 +10,8 @@ from .base import BaseModel
 class User(BaseModel):
     __tablename__ = "users"
 
-    user_id = Column(INT, unique=True, nullable=False, primary_key=True)
-    user_name = Column(VARCHAR(32), unique=False, nullable=True)
+    user_id = Column(BIGINT, unique=True, nullable=False, primary_key=True)
+    username = Column(VARCHAR(32), unique=False, nullable=True)
 
 
 class Service(BaseModel):
@@ -16,5 +20,5 @@ class Service(BaseModel):
     service_id = Column(INT, autoincrement=True, primary_key=True)
     service = Column(VARCHAR(32), unique=False, nullable=True)
     months = Column(INT, nullable=True)
-    deadline = Column(VARCHAR(12), nullable=True)
+    deadline = Column(VARCHAR(10), nullable=True)
     reminder = Column(INT, nullable=True)

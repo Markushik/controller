@@ -38,6 +38,26 @@ proxy = ["aiohttp-socks (>=0.7.1,<0.8.0)"]
 redis = ["redis (>=4.3.4,<5.0.0)"]
 
 [[package]]
+name = "aiogram-dialog"
+version = "2.0.0b15"
+description = "Mini-framework for dialogs on top of aiogram"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "aiogram_dialog-2.0.0b15-py3-none-any.whl", hash = "sha256:5f30e152b1d2fb27592b9755f6b973e9453736ba677785dceeb1ff95c6bc1edb"},
+]
+
+[package.dependencies]
+aiogram = ">=3.0.0b5,<4.0.0"
+cachetools = ">=4.0.0,<5.0.0"
+jinja2 = "*"
+magic-filter = "*"
+
+[package.extras]
+tools = ["diagrams"]
+
+[[package]]
 name = "aiohttp"
 version = "3.8.3"
 description = "Async http client/server framework (asyncio)"
@@ -301,6 +321,18 @@ requests = "*"
 [package.extras]
 filecache = ["lockfile (>=0.9)"]
 redis = ["redis (>=2.10.5)"]
+
+[[package]]
+name = "cachetools"
+version = "4.2.4"
+description = "Extensible memoizing collections and decorators"
+category = "main"
+optional = false
+python-versions = "~=3.5"
+files = [
+    {file = "cachetools-4.2.4-py3-none-any.whl", hash = "sha256:92971d3cb7d2a97efff7c7bb1657f21a8f5fb309a37530537c71b1774189f2d1"},
+    {file = "cachetools-4.2.4.tar.gz", hash = "sha256:89ea6f1b638d5a73a4f9226be57ac5e4f399d22770b92355f92dcb0f7f001693"},
+]
 
 [[package]]
 name = "certifi"
@@ -998,6 +1030,24 @@ files = [
 [package.extras]
 test = ["async-timeout", "pytest", "pytest-asyncio (>=0.17)", "pytest-trio", "testpath", "trio"]
 trio = ["async_generator", "trio"]
+
+[[package]]
+name = "jinja2"
+version = "3.1.2"
+description = "A very fast and expressive template engine."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
+    {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
+]
+
+[package.dependencies]
+MarkupSafe = ">=2.0"
+
+[package.extras]
+i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "jsonschema"
@@ -2205,4 +2255,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8ee7b86e1001c634ea2f3cfbec746aedfd065584682e93e54df3404f702aaf59"
+content-hash = "8995bc41aa2a3c0974d8a585127020505f8eefc5f5a6e8715d58eefa307e0dc8"

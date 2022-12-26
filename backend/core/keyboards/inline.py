@@ -1,3 +1,7 @@
+"""
+This file is responsible for displaying inline-buttons.
+"""
+
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            WebAppInfo)
 

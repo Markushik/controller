@@ -10,9 +10,9 @@ from loguru import logger
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from backend.core.database import get_session_maker, BaseModel
+from backend.core.database import BaseModel, get_session_maker
 from backend.core.database.engine import proceed_schemas
-from backend.core.routers import routers
+from backend.core.routers import errors, routers
 from utils.commands import set_commands
 from utils.config import settings
 
@@ -36,7 +36,7 @@ async def _main() -> None:
     disp = Dispatcher(storage=storage_url)
 
     disp.include_router(routers.router)
-    # disp.include_router(errors.router)
+    disp.include_router(errors.router)
 
     async_engine = create_async_engine(database_url)
     session_maker = get_session_maker(async_engine)

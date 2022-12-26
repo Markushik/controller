@@ -15,7 +15,7 @@ async def set_commands(bot: Bot) -> None:
     commands = [
         BotCommand(
             command="start",
-            description="start bot",
+            description="Запуск бота",
         ),
     ]
 

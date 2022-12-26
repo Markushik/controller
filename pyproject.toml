@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 aiogram = "^3.0.0b6"
+aiogram-dialog = "^2.0.0b15"
 aiohttp = "^3.8.3"
 aioredis = "^2.0.1"
 alembic = "^1.8.1"

@@ -1,6 +1,7 @@
 """
 The file responsible for use commands in bot
 """
+
 from datetime import datetime
 
 from aiogram import Bot, F, Router
@@ -11,16 +12,16 @@ from aiogram.types import (CallbackQuery, ContentType, FSInputFile,
 from aiogram.utils.deep_linking import create_start_link
 from aioredis import Redis
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound, ProgrammingError
 from sqlalchemy.orm import sessionmaker
 
-# from backend.core.database import User
 from backend.core.database.tables import Service, User
 from backend.core.keyboards.inline import (get_confirm_or_reject_keyboard,
                                            get_donate_menu,
                                            get_first_back_reserve_menu,
                                            get_main_back_menu, get_main_menu,
                                            get_subscription_actions)
-from backend.core.states.user import Form
+from backend.core.states.user import UserForm
 
 router = Router()
 redis = Redis()
@@ -40,13 +41,13 @@ async def get_user(user_id: int, session_maker: sessionmaker) -> User:
             return result.scalars().one()
 
 
-async def create_user(user_id: int, user_name: str, session_maker: sessionmaker) -> None:
+async def create_user(user_id: int, username: str, session_maker: sessionmaker) -> None:
     async with session_maker() as session:
         async with session.begin():
             session.add(
                 User(
                     user_id=user_id,
-                    user_name=user_name
+                    username=username
 
                 )
             )
@@ -59,9 +60,9 @@ async def start(message: Message, session_maker: sessionmaker) -> None:
     await redis.sadd("users_count", str(message.from_user.id))
 
     try:
-        await get_user(int(message.from_user.id), session_maker)
-    except Exception:
-        await create_user(int(message.from_user.id), str(message.from_user.first_name), session_maker)
+        await get_user(message.from_user.id, session_maker)
+    except (ProgrammingError, NoResultFound):
+        await create_user(message.from_user.id, message.from_user.first_name, session_maker)
 
     await message.answer_photo(
         photo=FSInputFile(
@@ -98,21 +99,21 @@ async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> Non
         )
     )
 
-    await state.set_state(Form.service)
+    await state.set_state(UserForm.service)
     await query.answer()
 
 
-@router.message(Form.service)
+@router.message(UserForm.service)
 async def add_months_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(title=message.text)
     await message.answer(
         text="— Сколько <b>месяцев</b> будет действовать подписка?\n\n"
              "<b>Пример:</b> <code>12 (мес.)</code>",
     )
-    await state.set_state(Form.months)
+    await state.set_state(UserForm.months)
 
 
-@router.message(Form.months)
+@router.message(UserForm.months)
 async def add_deadline_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(months=message.text)
 
@@ -122,14 +123,14 @@ async def add_deadline_subscription(message: Message, state: FSMContext) -> None
         await message.answer(text="<b>🚫 Ошибка:</b> Недопустимые символы")
         return
 
-    await state.set_state(Form.reminder)
+    await state.set_state(UserForm.reminder)
     await message.answer(
         text="— В какую <b>дату</b> произойдет списание средств?\n\n"
              "<b>Пример:</b> <code>12-12-2023</code>"
     )
 
 
-@router.message(Form.reminder)
+@router.message(UserForm.reminder)
 async def add_reminder_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(deadline=message.text)
 
@@ -140,14 +141,14 @@ async def add_reminder_subscription(message: Message, state: FSMContext) -> None
         await message.answer(text="<b>🚫 Ошибка:</b> Неверный формат")
         return
 
-    await state.set_state(Form.deadline)
+    await state.set_state(UserForm.deadline)
     await message.answer(
         text="— За сколько <b>дней</b> оповещать о ближайшем списании?\n\n"
              "<b>Пример:</b> <code>2 (д.)</code>"
     )
 
 
-@router.message(Form.deadline)
+@router.message(UserForm.deadline)
 async def viewing_results(message: Message, state: FSMContext) -> None:
     await state.update_data(reminder=message.text)
     user_data = await state.get_data()
@@ -202,7 +203,7 @@ async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
              "<b>Пример:</b> <code>Tinkoff Pro</code>"
     )
     await state.clear()
-    await state.set_state(Form.service)
+    await state.set_state(UserForm.service)
     await query.answer()
 
 
