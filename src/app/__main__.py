@@ -10,11 +10,11 @@ from loguru import logger
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from backend.core.database import BaseModel, get_session_maker
-from backend.core.database.engine import proceed_schemas
-from backend.core.routers import errors, routers
-from utils.commands import set_commands
-from utils.config import settings
+from app.core.database import BaseModel, get_session_maker
+from app.core.database.engine import proceed_schemas
+from app.core.routers import errors, routers
+from app.utils.commands import set_commands
+from app.utils.config import settings
 
 
 async def _main() -> None:

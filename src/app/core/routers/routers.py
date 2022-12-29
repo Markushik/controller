@@ -15,13 +15,13 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound, ProgrammingError
 from sqlalchemy.orm import sessionmaker
 
-from backend.core.database.tables import Service, User
-from backend.core.keyboards.inline import (get_confirm_or_reject_keyboard,
-                                           get_donate_menu,
-                                           get_first_back_reserve_menu,
-                                           get_main_back_menu, get_main_menu,
-                                           get_subscription_actions)
-from backend.core.states.user import UserForm
+from app.core.database.tables import Service, User
+from app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
+                                       get_donate_menu,
+                                       get_first_back_reserve_menu,
+                                       get_main_back_menu, get_main_menu,
+                                       get_subscription_actions)
+from app.core.states.user import UserForm
 
 router = Router()
 redis = Redis()
@@ -77,7 +77,7 @@ async def start_reserve(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
             media=FSInputFile(
-                "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
             ),
             caption="<b>🗂️ Каталог активных подписок:</b>\n\n"
                     "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
@@ -92,7 +92,7 @@ async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> Non
     await query.message.edit_media(
         media=InputMediaPhoto(
             media=FSInputFile(
-                "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
             ),
             caption="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
                     "<b>Пример:</b> <code>Tinkoff Premium</code>",
@@ -212,7 +212,7 @@ async def start_second_reserve(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
             media=FSInputFile(
-                "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
             ),
             caption="<b>🗂️ Каталог активных подписок:</b>\n\n"
                     "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
@@ -227,7 +227,7 @@ async def start_first_reserve(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
             media=FSInputFile(
-                "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
             )
         ),
         reply_markup=get_main_menu(),
@@ -245,7 +245,7 @@ async def account_data(query: CallbackQuery, bot: Bot) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
             media=FSInputFile(
-                "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
             ),
             caption=f"<b>🆔 Ваш ID:</b> <code>{query.from_user.id}</code>\n"
                     f"<b>📅 Регистрация:</b> <code>{str(date, 'utf-8')[:-7]}</code>\n"
@@ -263,7 +263,7 @@ async def author_support(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
             media=FSInputFile(
-                "C:/Users/Zemik/Documents/GitHub/controller/app/assets/images/menu.png"
+                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
             )
         ),
         reply_markup=get_donate_menu(),
