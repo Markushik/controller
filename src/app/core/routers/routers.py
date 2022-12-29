@@ -15,13 +15,13 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound, ProgrammingError
 from sqlalchemy.orm import sessionmaker
 
-from app.core.database.tables import Service, User
-from app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
+from src.app.core.database.tables import Service, User
+from src.app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
                                        get_donate_menu,
                                        get_first_back_reserve_menu,
                                        get_main_back_menu, get_main_menu,
                                        get_subscription_actions)
-from app.core.states.user import UserForm
+from src.app.core.states.user import UserForm
 
 router = Router()
 redis = Redis()
