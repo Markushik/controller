@@ -15,13 +15,11 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound, ProgrammingError
 from sqlalchemy.orm import sessionmaker
 
-from src.app.core.database.tables import Service, User
-from src.app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
-                                       get_donate_menu,
-                                       get_first_back_reserve_menu,
-                                       get_main_back_menu, get_main_menu,
-                                       get_subscription_actions)
-from src.app.core.states.user import UserForm
+from app.core.database.tables import Service, User
+from app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
+                                       get_donate_menu, get_main_back_menu,
+                                       get_main_menu, get_subscription_actions)
+from app.core.states.user import UserForm
 
 router = Router()
 redis = Redis()
@@ -87,7 +85,7 @@ async def start_reserve(query: CallbackQuery) -> None:
     await query.answer()
 
 
-@router.callback_query(F.data == "add_data")  # Добавить
+@router.callback_query(F.data == "add_data")
 async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
@@ -117,7 +115,10 @@ async def add_months_subscription(message: Message, state: FSMContext) -> None:
 async def add_deadline_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(months=message.text)
 
-    if message.text.isdigit() and int(message.text) != 0 and int(message.text) <= 12:
+    if int(message.text) > 12:
+        await message.answer(text="<b>🚫 Ошибка:</b> Недопустимая длинна месяца")
+        return
+    elif message.text.isdigit() and int(message.text) != 0 and int(message.text) <= 12:
         pass
     else:
         await message.answer(text="<b>🚫 Ошибка:</b> Недопустимые символы")
@@ -170,14 +171,17 @@ async def viewing_results(message: Message, state: FSMContext) -> None:
 
 
 @router.callback_query(F.data == "confirm_data")
-async def confirm_result(
-        query: CallbackQuery, state: FSMContext, session_maker: sessionmaker
-) -> None:
+async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker: sessionmaker) -> None:
     user_data = await state.get_data()
 
     await query.message.edit_text(
-        text="<b>✅ Успех:</b> Данные были успешно записаны",
-        reply_markup=get_first_back_reserve_menu(),
+        text="<b>✅ Одобрено:</b> Данные успешно записаны"
+    )
+    await query.message.answer_photo(
+        photo=FSInputFile(
+            "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
+        ),
+        reply_markup=get_main_menu()
     )
 
     async with session_maker() as session:

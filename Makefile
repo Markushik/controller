@@ -2,7 +2,7 @@
 
 py := poetry run
 
-package_dir := ./backend/
+package_dir := app
 code_dir := $(package_dir)
 
 .PHONY: auto_refact

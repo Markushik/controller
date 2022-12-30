@@ -26,4 +26,4 @@ jobs:
           poetry install --only dev --no-root --no-interaction --no-ansi
       - name: Run flake8
         run: |
-          poetry run flake8 ./backend/
+          poetry run flake8 ./app/

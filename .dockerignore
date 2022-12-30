@@ -129,6 +129,5 @@ dmypy.json
 .pyre/
 
 # Ignore dynaconf secret files
-.secrets.*
 .idea
 .debug.log

@@ -1,22 +1,30 @@
 version: '3.9'
 
 services:
+  redis:
+    container_name: redis
+    image: "redis:7.0.7-alpine"
+    ports:
+      - "6379:6379"
+    restart: "unless-stopped"
   postgres:
     container_name: postgres
-    image: "postgres:14-alpine"
+    image: "postgres:14.6-alpine"
     ports:
       - "5432:5432"
     restart: "unless-stopped"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-  redis:
-    container_name: redis
-    image: "redis:7.0-alpine"
-    ports:
-      - "6379:6379"
+  nats:
+    container_name: nats
+    image: "nats:2.9.10-alpine"
     restart: "unless-stopped"
-  bot:
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
+  app:
     container_name: app
     build:
       context: .
@@ -26,5 +34,6 @@ services:
     stop_signal: SIGINT
     restart: "unless-stopped"
     depends_on:
-      - postgres
       - redis
+      - postgres
+      - nats
