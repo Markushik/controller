@@ -176,7 +176,7 @@ async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker:
     await query.message.answer_photo(
         photo=FSInputFile(f"{IMG_PATH}/main-menu.png"),
         reply_markup=get_main_menu()
-    )  # TODO: Отправлять меню "Действия с подписками"
+    )  # Отправлять меню "Действия с подписками"
 
     async with session_maker() as session:
         async with session.begin():
