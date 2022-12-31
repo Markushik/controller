@@ -20,6 +20,7 @@ First of all, this is a pet-project that shows what technologies I work with and
         • aiogram
         • alembic
         • aioredis
+        • panini
         • asyncpg
         • sqlalchemy
         • dynaconf
@@ -36,7 +37,7 @@ First of all, this is a pet-project that shows what technologies I work with and
 
     1. Creating a referral system — ❌
     2. Create a bot design — ❌
-    3. Create Inline-calendar (maybe aiogram-dialogs?)
+    3. Create Inline-calendar (maybe aiogram-dialogs?) — ❌
     4. Connect NATS JetStream — ❌
     5. Web-APP statistics and Donate Menu — ❌
     6. Add multilingualism (a lot of users) — ❌
