@@ -44,7 +44,9 @@ async def _main() -> None:
     try:
         await set_commands(bot)
         await proceed_schemas(async_engine, BaseModel.metadata)
-        await disp.start_polling(bot, session_maker=session_maker, allowed_updates=disp.resolve_used_update_types())
+        await disp.start_polling(
+            bot, session_maker=session_maker, allowed_updates=disp.resolve_used_update_types()
+        )
     finally:
         await disp.storage.close()
         await bot.session.close()

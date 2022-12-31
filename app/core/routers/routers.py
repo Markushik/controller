@@ -15,6 +15,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound, ProgrammingError
 from sqlalchemy.orm import sessionmaker
 
+from app.constans import IMG_PATH
 from app.core.database.tables import Service, User
 from app.core.keyboards.inline import (get_confirm_or_reject_keyboard,
                                        get_donate_menu, get_main_back_menu,
@@ -63,9 +64,7 @@ async def start(message: Message, session_maker: sessionmaker) -> None:
         await create_user(message.from_user.id, message.from_user.first_name, session_maker)
 
     await message.answer_photo(
-        photo=FSInputFile(
-            "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-        ),
+        photo=FSInputFile(f"{IMG_PATH}/main-menu.png"),
         reply_markup=get_main_menu(),
     )
 
@@ -74,9 +73,7 @@ async def start(message: Message, session_maker: sessionmaker) -> None:
 async def start_reserve(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile(
-                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-            ),
+            media=FSInputFile(f"{IMG_PATH}/main-menu.png"),
             caption="<b>🗂️ Каталог активных подписок:</b>\n\n"
                     "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
         ),
@@ -87,44 +84,43 @@ async def start_reserve(query: CallbackQuery) -> None:
 
 @router.callback_query(F.data == "add_data")
 async def add_title_subscription(query: CallbackQuery, state: FSMContext) -> None:
+    await state.set_state(UserForm.service)
+
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile(
-                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-            ),
+            media=FSInputFile(f"{IMG_PATH}/main-menu.png"),
             caption="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
                     "<b>Пример:</b> <code>Tinkoff Premium</code>",
         )
     )
-
-    await state.set_state(UserForm.service)
     await query.answer()
 
 
 @router.message(UserForm.service)
 async def add_months_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(title=message.text)
+    await state.set_state(UserForm.months)
+
     await message.answer(
         text="— Сколько <b>месяцев</b> будет действовать подписка?\n\n"
              "<b>Пример:</b> <code>12 (мес.)</code>",
     )
-    await state.set_state(UserForm.months)
 
 
 @router.message(UserForm.months)
 async def add_deadline_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(months=message.text)
+    await state.set_state(UserForm.reminder)
 
     if int(message.text) > 12:
         await message.answer(text="<b>🚫 Ошибка:</b> Недопустимая длинна месяца")
         return
-    elif message.text.isdigit() and int(message.text) != 0 and int(message.text) <= 12:
+    if message.text.isdigit() and int(message.text) != 0 and int(message.text) <= 12:
         pass
     else:
         await message.answer(text="<b>🚫 Ошибка:</b> Недопустимые символы")
         return
 
-    await state.set_state(UserForm.reminder)
     await message.answer(
         text="— В какую <b>дату</b> произойдет списание средств?\n\n"
              "<b>Пример:</b> <code>12-12-2023</code>"
@@ -134,6 +130,7 @@ async def add_deadline_subscription(message: Message, state: FSMContext) -> None
 @router.message(UserForm.reminder)
 async def add_reminder_subscription(message: Message, state: FSMContext) -> None:
     await state.update_data(deadline=message.text)
+    await state.set_state(UserForm.deadline)
 
     try:
         datetime.strptime(message.text, "%d-%m-%Y")
@@ -142,7 +139,6 @@ async def add_reminder_subscription(message: Message, state: FSMContext) -> None
         await message.answer(text="<b>🚫 Ошибка:</b> Неверный формат")
         return
 
-    await state.set_state(UserForm.deadline)
     await message.answer(
         text="— За сколько <b>дней</b> оповещать о ближайшем списании?\n\n"
              "<b>Пример:</b> <code>2 (д.)</code>"
@@ -178,11 +174,9 @@ async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker:
         text="<b>✅ Одобрено:</b> Данные успешно записаны"
     )
     await query.message.answer_photo(
-        photo=FSInputFile(
-            "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-        ),
+        photo=FSInputFile(f"{IMG_PATH}/main-menu.png"),
         reply_markup=get_main_menu()
-    )
+    )  # TODO: Отправлять меню "Действия с подписками"
 
     async with session_maker() as session:
         async with session.begin():
@@ -202,12 +196,17 @@ async def confirm_result(query: CallbackQuery, state: FSMContext, session_maker:
 
 @router.callback_query(F.data == "reject_data")
 async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
-    await query.message.edit_text(
-        text="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
-             "<b>Пример:</b> <code>Tinkoff Pro</code>"
-    )
     await state.clear()
     await state.set_state(UserForm.service)
+
+    await query.message.edit_text(
+        text="<b>❎ Отклонено:</b> Данные не записаны"
+    )
+    await query.message.answer_photo(
+        photo=FSInputFile(f"{IMG_PATH}/main-menu.png"),
+        caption="— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
+                "<b>Пример:</b> <code>Tinkoff Premium</code>",
+    )
     await query.answer()
 
 
@@ -215,9 +214,7 @@ async def overwriting_data(query: CallbackQuery, state: FSMContext) -> None:
 async def start_second_reserve(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile(
-                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-            ),
+            media=FSInputFile(f"{IMG_PATH}/main-menu.png"),
             caption="<b>🗂️ Каталог активных подписок:</b>\n\n"
                     "У вас не имеется <b>активных</b> подписок 🤷‍♂️",
         ),
@@ -230,9 +227,7 @@ async def start_second_reserve(query: CallbackQuery) -> None:
 async def start_first_reserve(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile(
-                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-            )
+            media=FSInputFile(f"{IMG_PATH}/main-menu.png")
         ),
         reply_markup=get_main_menu(),
     )
@@ -242,19 +237,14 @@ async def start_first_reserve(query: CallbackQuery) -> None:
 @router.callback_query(F.data == "account_data")
 async def account_data(query: CallbackQuery, bot: Bot) -> None:
     date = await redis.get(str(query.from_user.id))
-    link = await create_start_link(
-        bot=bot, payload=str(query.from_user.id), encode=True
-    )
+    link = await create_start_link(bot=bot, payload=str(query.from_user.id), encode=True)
 
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile(
-                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-            ),
+            media=FSInputFile(f"{IMG_PATH}/main-menu.png"),
             caption=f"<b>🆔 Ваш ID:</b> <code>{query.from_user.id}</code>\n"
                     f"<b>📅 Регистрация:</b> <code>{str(date, 'utf-8')[:-7]}</code>\n"
                     f"<b>👥 Приглашено:</b> <code>5 (чел.)</code>\n\n"
-            # #202 Редиска считает кол-во переходов по ссылке и выводит значение
                     f"<b>🔗 Ваша реферальная ссылка:</b>\n" f"<code>{link}</code>",
         ),
         reply_markup=get_main_back_menu(),
@@ -266,9 +256,7 @@ async def account_data(query: CallbackQuery, bot: Bot) -> None:
 async def author_support(query: CallbackQuery) -> None:
     await query.message.edit_media(
         media=InputMediaPhoto(
-            media=FSInputFile(
-                "C:/Users/Zemik/PycharmProjects/controller/assets/images/main-menu.png"
-            )
+            media=FSInputFile(f"{IMG_PATH}/main-menu.png")
         ),
         reply_markup=get_donate_menu(),
     )
@@ -278,5 +266,4 @@ async def author_support(query: CallbackQuery) -> None:
 @router.message(F.content_type_in(ContentType.WEB_APP_DATA))
 async def users_statistics(query: CallbackQuery) -> None:
     # users = await redis.scard("users_count")
-    pass
     await query.answer()
