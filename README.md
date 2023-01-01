@@ -15,7 +15,7 @@ First of all, this is a pet-project that shows what technologies I work with and
         • Docker
         • NATS JetStream
     
-    🔥 Frameworks
+    🔥 Frameworks & Libraries
         
         • aiogram
         • alembic
